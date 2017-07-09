@@ -29,8 +29,8 @@
 
 (setq yarn-mode-font-lock-defaults
       `((,yarn-mode-attributes-re . font-lock-builtin-face)
-        (,yarn-mode-package-re . (2 font-lock-keyword-face t)) ;; Direct deps
-        (,yarn-mode-dependencies-re . (1 font-lock-keyword-face t)) ;; Dep of another dep (nested)
+        (,yarn-mode-package-re . (2 'yarn-mode-package-face t)) ;; Direct deps
+        (,yarn-mode-dependencies-re . (1 'yarn-mode-package-face t)) ;; Dep of another dep (nested)
         ))
 
 (setq yarn-mode-syntax-table
@@ -39,6 +39,12 @@
         (modify-syntax-entry ?\n ">" syntable)
         (modify-syntax-entry ?\" "\"" syntable)
         syntable))
+
+;; Custom faces
+(defface yarn-mode-package-face
+  '((t :inherit default :weight bold))
+  "Font lock face for package names."
+  :group 'yarn-mode)
 
 ;;;###autoload
 (define-derived-mode yarn-mode text-mode "Yarn"
