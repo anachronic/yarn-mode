@@ -1,6 +1,7 @@
 # `yarn-mode`
 
-This package contains a major mode for `yarn.lock` files.
+This package contains a major mode
+for [Yarn](https://yarnpkg.com/)-generated `yarn.lock` files.
 
 ## Installation
 
@@ -10,6 +11,11 @@ No MELPA just yet. Copy `yarn-mode.el` to your load path and then:
 (require 'yarn-mode)
 ```
 Yes. It's that simple.
+
+## Related
+
+If you'd like to manage Yarn through emacs, you might want to
+check [yarn.el](https://github.com/jmfirth/yarn.el) also.
 
 ## Credits
 
