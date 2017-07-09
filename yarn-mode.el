@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
+(defgroup yarn-mode nil
+  "Major mode for yarn.lock files"
+  :group 'convenience)
 
 (defvar yarn-mode-syntax-table
   nil
