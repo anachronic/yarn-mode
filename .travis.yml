@@ -30,3 +30,7 @@ install:
 script:
   # Run your tests
   - cask exec ert-runner
+notifications:
+  email:
+    on_success: never
+    on_failure: always
