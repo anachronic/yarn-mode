@@ -47,7 +47,7 @@
 
 (defvar yarn-mode-attributes-re
   nil
-  "Keywords of yarn-mode.")
+  "Keywords of `yarn-mode'.")
 
 (defvar yarn-mode-font-lock-defaults
   nil
