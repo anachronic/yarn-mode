@@ -12,6 +12,11 @@ No MELPA just yet. Copy `yarn-mode.el` to your load path and then:
 ```
 Yes. It's that simple.
 
+## Features
+
+* Font locking in the buffer
+* Automatic read-only when reading the buffer
+
 ## Related
 
 If you'd like to manage Yarn through emacs, you might want to

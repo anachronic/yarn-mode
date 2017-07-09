@@ -30,7 +30,8 @@
 
 ;; To install, just (require 'yarn-mode)
 
-;; yarn.lock files will be automatically be opened with yarn-mode
+;; yarn.lock files will be automatically be opened with yarn-mode and
+;; will be in read-only mode
 
 ;; Visit the home page at https://github.com/anachronic/yarn-mode
 
@@ -97,7 +98,8 @@
 (define-derived-mode yarn-mode text-mode "Yarn"
   "Simple mode to highlight yarn.lock files."
   :syntax-table yarn-mode-syntax-table
-  (setq font-lock-defaults '(yarn-mode-font-lock-defaults)))
+  (setq font-lock-defaults '(yarn-mode-font-lock-defaults))
+  (setq buffer-read-only t))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("yarn\\.lock\\'" . yarn-mode))

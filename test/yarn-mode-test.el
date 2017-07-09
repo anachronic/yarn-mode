@@ -40,7 +40,6 @@ babel-helper-call-delegate@^6.24.1:
     (goto-char (point-min))
     (let ((str-check yarn-mode--test-fonts))
       (while (not (eobp))
-        (message (symbol-name (face-at-point)))
         (when (member (face-at-point)
                       str-check)
           (setq str-check (delete (face-at-point) str-check)))
