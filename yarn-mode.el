@@ -31,9 +31,9 @@
 (setq yarn-mode-attributes-re (regexp-opt '("version" "resolved" "dependencies")))
 
 (setq yarn-mode-font-lock-defaults
-      `((,yarn-mode-attributes-re . font-lock-builtin-face)
+      `((,yarn-mode-attributes-re . 'yarn-mode-keywords-face)
         (,yarn-mode-package-re . (2 'yarn-mode-package-face t)) ;; Direct deps
-        (,yarn-mode-dependencies-re . (1 'yarn-mode-package-face t)) ;; Dep of another dep (nested)
+        (,yarn-mode-dependencies-re . (1 'yarn-mode-dependency-face t)) ;; Dep of another dep (nested)
         ))
 
 (setq yarn-mode-syntax-table
@@ -45,8 +45,18 @@
 
 ;; Custom faces
 (defface yarn-mode-package-face
-  '((t :inherit default :weight bold))
-  "Font lock face for package names."
+  '((t :inherit bold))
+  "Font lock face for package names in yarn mode."
+  :group 'yarn-mode)
+
+(defface yarn-mode-dependency-face
+  '((t :inherit bold))
+  "Font lock face for package nested dependencies in yarn mode."
+  :group 'yarn-mode)
+
+(defface yarn-mode-keywords-face
+  '((t :inherit font-lock-builtin-face))
+  "Font lock face for yarn keywords."
   :group 'yarn-mode)
 
 ;;;###autoload
