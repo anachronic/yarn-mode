@@ -1,11 +1,23 @@
-# `yarn-mode`
+# `yarn-mode` [![MELPA](https://melpa.org/packages/yarn-mode-badge.svg)](https://melpa.org/#/yarn-mode) [![Build Status](https://travis-ci.org/anachronic/yarn-mode.svg?branch=master)](https://travis-ci.org/anachronic/yarn-mode)
 
 This package contains a major mode
 for [Yarn](https://yarnpkg.com/)-generated `yarn.lock` files.
 
 ## Installation
 
-No MELPA just yet. Copy `yarn-mode.el` to your load path and then:
+### Using MELPA
+
+``` emacs-lisp
+M-x package-install RET yarn-mode RET
+```
+
+That should do it. If it doesn't highlight the files, try adding
+`(require 'yarn-mode)` in your `init.el` file.
+
+
+### Without MELPA
+
+Copy `yarn-mode.el` to your load path and then:
 
 ``` emacs-lisp
 (require 'yarn-mode)
