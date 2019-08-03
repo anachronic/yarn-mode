@@ -63,7 +63,7 @@
 
 (setq yarn-mode-package-re "\\(^\\|,\\s-\\)\\([a-zA-Z-_0-9]+\\)@")
 (setq yarn-mode-dependencies-re "\\s-\\{4,\\}\\([a-zA-Z-_0-9]+\\)\\s-")
-(setq yarn-mode-attributes-re (regexp-opt '("version" "resolved" "dependencies")))
+(setq yarn-mode-attributes-re (regexp-opt '("version" "resolved" "dependencies" "integrity")))
 
 (setq yarn-mode-font-lock-defaults
       `((,yarn-mode-attributes-re . 'yarn-mode-keywords-face)
