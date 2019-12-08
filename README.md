@@ -1,5 +1,9 @@
 # `yarn-mode` [![MELPA](https://melpa.org/packages/yarn-mode-badge.svg)](https://melpa.org/#/yarn-mode) [![Build Status](https://travis-ci.org/anachronic/yarn-mode.svg?branch=master)](https://travis-ci.org/anachronic/yarn-mode)
 
+> This repository is going to be archived on Jan 31, 2020 because I have not been
+> using Emacs for a long time now. If you wish to maintain this project. Please
+> leave a comment [here](https://github.com/anachronic/yarn-mode/issues/3)
+
 This package contains a major mode
 for [Yarn](https://yarnpkg.com/)-generated `yarn.lock` files.
 
