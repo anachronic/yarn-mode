@@ -33,13 +33,31 @@
 ;; yarn.lock files will be automatically be opened with yarn-mode and
 ;; will be in read-only mode
 
+;; Given yarn-mode-inhibit-mode-change is nil (default), saving
+;; the buffer will attempt to chmod +r the visited file and then
+;; restore the original mode.  This won't work in every circumstance
+;; An error is raised if the file is unreadable after the attempt.
+
 ;; Visit the home page at https://github.com/anachronic/yarn-mode
 
 ;;; Code:
 
+(eval-when-compile (require 'files))
+
 (defgroup yarn-mode nil
   "Major mode for yarn.lock files"
   :group 'convenience)
+
+(defcustom yarn-mode-inhibit-mode-change nil
+  "When t do not change the mode of visited file when saving."
+  :type '(choice (nil :tag "Enable")
+		 (t :tag "Inhibit")))
+
+(defcustom yarn-mode--mode-modifier "+w"
+  "A chmod(1) style modifier applied visited file when saving.
+
+Also see: `yarn-mode--make-file-writeable-maybe'."
+  :type 'string)
 
 (defvar yarn-mode-syntax-table
   nil
