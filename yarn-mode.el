@@ -33,13 +33,31 @@
 ;; yarn.lock files will be automatically be opened with yarn-mode and
 ;; will be in read-only mode
 
+;; Given yarn-mode-inhibit-mode-change is nil (default), saving
+;; the buffer will attempt to chmod +r the visited file and then
+;; restore the original mode.  This won't work in every circumstance
+;; An error is raised if the file is unreadable after the attempt.
+
 ;; Visit the home page at https://github.com/anachronic/yarn-mode
 
 ;;; Code:
 
+(eval-when-compile (require 'files))
+
 (defgroup yarn-mode nil
   "Major mode for yarn.lock files"
   :group 'convenience)
+
+(defcustom yarn-mode-inhibit-mode-change nil
+  "When t do not change the mode of visited file when saving."
+  :type '(choice (nil :tag "Enable")
+		 (t :tag "Inhibit")))
+
+(defcustom yarn-mode--mode-modifier "+w"
+  "A chmod(1) style modifier applied visited file when saving.
+
+Also see: `yarn-mode--make-file-writeable-maybe'."
+  :type 'string)
 
 (defvar yarn-mode-syntax-table
   nil
@@ -60,6 +78,10 @@
 (defvar yarn-mode-dependencies-re
   nil
   "Regular expression that defines a package dependency.")
+
+(defvar yarn-mode--before-save-file-mode
+  nil
+  "Stores the original file mode if we need to change it during save.")
 
 (setq yarn-mode-package-re "\\(^\\|,\\s-\\)\\([a-zA-Z-_0-9]+\\)@")
 (setq yarn-mode-dependencies-re "\\s-\\{4,\\}\\([a-zA-Z-_0-9]+\\)\\s-")
@@ -94,12 +116,41 @@
   "Font lock face for yarn keywords."
   :group 'yarn-mode)
 
+(defun yarn-mode--make-file-writeable-maybe ()
+  "Maybe attempt to set visited file writable during save.
+
+Set `yarn-mode-inhibit-mode-change' to t to prevent.  Visited
+file's mode is modified by applying `yarn-mode--mode-modifier'.
+
+This won't work in all circumstances, for example if you don't
+have sufficient permission to change the file's mode.  An error is
+raised if the file is unreadable after the attempt."
+  (let ((file-name (buffer-file-name)))
+    (when (not (file-writable-p file-name))
+      (setq yarn-mode--before-save-file-mode (file-modes file-name))
+      (set-file-modes file-name (file-modes-symbolic-to-number
+				 yarn-mode--mode-modifier))
+      (when (not (file-writable-p file-name))
+      	(yarn-mode--restore-file-mode)
+      	(setq yarn-mode--before-save-file-mode nil)
+      	(error "Unable to make %s writable, mode:%s"
+	         file-name
+	         yarn-mode--before-save-file-mode)))))
+
+(defun yarn-mode--restore-file-mode ()
+  "Restore file mode to before save-state."
+  (when yarn-mode--before-save-file-mode
+    (set-file-modes (buffer-file-name) yarn-mode--before-save-file-mode)
+    (setq yarn-mode--before-save-file-mode nil)))
+
 ;;;###autoload
 (define-derived-mode yarn-mode text-mode "Yarn"
   "Simple mode to highlight yarn.lock files."
   :syntax-table yarn-mode-syntax-table
   (setq font-lock-defaults '(yarn-mode-font-lock-defaults))
-  (setq buffer-read-only t))
+  (setq buffer-read-only t)
+  (add-hook before-save-hook 'yarn-mode--make-file-writable-maybe)
+  (add-hook 'after-save-hook 'yarn-mode--restore-file-mode))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("yarn\\.lock\\'" . yarn-mode))
