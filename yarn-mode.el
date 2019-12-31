@@ -61,6 +61,10 @@
   nil
   "Regular expression that defines a package dependency.")
 
+(defvar yarn-mode--before-save-file-mode
+  nil
+  "Stores the original file mode if we need to change it during save.")
+
 (setq yarn-mode-package-re "\\(^\\|,\\s-\\)\\([a-zA-Z-_0-9]+\\)@")
 (setq yarn-mode-dependencies-re "\\s-\\{4,\\}\\([a-zA-Z-_0-9]+\\)\\s-")
 (setq yarn-mode-attributes-re (regexp-opt '("version" "resolved" "dependencies" "integrity")))
@@ -94,12 +98,41 @@
   "Font lock face for yarn keywords."
   :group 'yarn-mode)
 
+(defun yarn-mode--make-file-writeable-maybe ()
+  "Maybe attempt to set visited file writable during save.
+
+Set `yarn-mode-inhibit-mode-change' to t to prevent.  Visited
+file's mode is modified by applying `yarn-mode--mode-modifier'.
+
+This won't work in all circumstances, for example if you don't
+have sufficient permission to change the file's mode.  An error is
+raised if the file is unreadable after the attempt."
+  (let ((file-name (buffer-file-name)))
+    (when (not (file-writable-p file-name))
+      (setq yarn-mode--before-save-file-mode (file-modes file-name))
+      (set-file-modes file-name (file-modes-symbolic-to-number
+				 yarn-mode--mode-modifier))
+      (when (not (file-writable-p file-name))
+	(yarn-mode--restore-file-mode)
+	(setq yarn-mode--before-save-file-mode nil)
+	(error "Unable to make %s writable, mode:%s"
+	       file-name
+	       yarn-mode--before-save-file-mode)))))
+
+(defun yarn-mode--restore-file-mode ()
+  "Restore file mode to before save-state."
+  (when yarn-mode--before-save-file-mode
+    (set-file-modes (buffer-file-name) yarn-mode--before-save-file-mode)
+    (setq yarn-mode--before-save-file-mode nil)))
+
 ;;;###autoload
 (define-derived-mode yarn-mode text-mode "Yarn"
   "Simple mode to highlight yarn.lock files."
   :syntax-table yarn-mode-syntax-table
   (setq font-lock-defaults '(yarn-mode-font-lock-defaults))
-  (setq buffer-read-only t))
+  (setq buffer-read-only t)
+  (add-hook before-save-hook 'yarn-mode--make-file-writable-maybe)
+  (add-hook 'after-save-hook 'yarn-mode--restore-file-mode))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("yarn\\.lock\\'" . yarn-mode))
